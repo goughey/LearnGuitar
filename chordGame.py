@@ -21,7 +21,22 @@ class GuitarChordQuiz:
         self.canvas = tk.Canvas(master, width=750, height=270)
         self.canvas.pack()
 
-        self.new_question_frame = tk.Frame(master)
+        self.bottom_frame = tk.Frame(master)
+        self.bottom_frame.pack(side="top", fill="both", expand=True, padx=10)
+
+        self.answer_frame = tk.Frame(self.bottom_frame)
+        self.answer_frame.pack()
+
+        self.check_label = tk.Label(self.answer_frame, text="Answer:   ")
+        self.check_label.pack(side=tk.LEFT)
+
+        self.entry = tk.Entry(self.answer_frame, width=10)
+        self.entry.pack(side=tk.LEFT)
+
+        self.check_button = tk.Button(self.answer_frame, text="Check Answer", command=self.check_answer)
+        self.check_button.pack(side=tk.LEFT)
+
+        self.new_question_frame = tk.Frame(self.bottom_frame)
         self.new_question_frame.pack(side='right', fill='none', expand=False)
 
         self.chord_type_label = tk.Label(self.new_question_frame, text="Chord Type:")
@@ -34,44 +49,31 @@ class GuitarChordQuiz:
         self.chord_type_combobox.grid(row=0, column=2, padx=10, pady=10, sticky="w")
         self.new_question_button.grid(row=1, column=2, columnspan=2, padx=10, pady=10, sticky="w")
 
-        self.answer_frame = tk.Frame(master)
-        self.answer_frame.pack()
-
-        self.check_label = tk.Label(self.answer_frame, text="Answer:   ")
-        self.check_label.pack(side=tk.LEFT)
-
-        self.entry = tk.Entry(self.answer_frame, width=10)
-        self.entry.pack(side=tk.LEFT)
-
-        self.check_button = tk.Button(self.answer_frame, text="Check Answer", command=self.check_answer)
-        self.check_button.pack(side=tk.LEFT)
-
         self.result_label = tk.Label(master, text="")
         self.result_label.pack()
 
         self.generate_new_question()
 
-    def generate_random_numbers(self):
+    def generate_random_numbers(self): # Generates a point on the fretboard
         self.string_number = random.randint(1, 6)
         self.fret_number = random.randint(0, 19)
         return self.string_number, self.fret_number
 
-    def get_note(self):
+    def get_note(self): # Gets the root note of the chord
         string_notes = ['E', 'B', 'G', 'D', 'A', 'E']
         open_string_note = string_notes[self.string_number - 1]
         fretted_note_index = (self.note_names.index(open_string_note) + self.fret_number) % 12
         fretted_note = self.note_names[fretted_note_index]
         return fretted_note
 
-    def get_string_name(self):
+    def get_string_name(self): # Gets the name of the selected string
         string_names = ['E1', 'B2', 'G3', 'D4', 'A5', 'E6']
         return string_names[self.string_number - 1]
 
-    def draw_guitar(self):
+    def draw_guitar(self): # Draw the guitar body and the position to answer
         self.canvas.delete("all")
         string_colors = ['black', 'black', 'black', 'black', 'black', 'black']
 
-        # Draw the guitar body
         body_coords = [470, 50, 715, 50, 715, 200, 470, 200, 1000, 300, 850, 125, 1000, -50]
         self.canvas.create_polygon(body_coords, fill='brown', outline='black')
         neck_coords = [50, 50, 0, 40, 0, 208, 30, 215, 50, 200]
@@ -113,7 +115,7 @@ class GuitarChordQuiz:
 
             self.canvas.create_oval(fret_position - 5, string_position - 5, fret_position + 5, string_position + 5, fill='red')
 
-    def generate_note_labels(self):
+    def generate_note_labels(self): # Peak functionality (display notes on guitar)
         if self.show_labels:
             chord_notes = self.get_chord_notes()
             chord_notes_str = ", ".join([self.note_names[note] for note in chord_notes])
@@ -137,13 +139,13 @@ class GuitarChordQuiz:
                 self.canvas.delete(label)
         self.show_labels = not self.show_labels
 
-    def get_chord_notes(self):
+    def get_chord_notes(self): # Gets the notes in the chosen chord
         root_index = self.note_names.index(self.get_note())
         third_index = (root_index + 4) % 12
         fifth_index = (root_index + 7) % 12
         return [root_index, third_index, fifth_index]
 
-    def check_answer(self):
+    def check_answer(self): # Checks the users response to the question
         user_input = self.entry.get().upper()
         correct_note = self.get_note()
 
@@ -157,7 +159,6 @@ class GuitarChordQuiz:
             self.string_label.config(text="Which Chord Is This?")
             self.show_labels = not self.show_labels
         self.generate_random_numbers()
-        chord_notes = self.get_chord_notes()
         self.entry.delete(0, tk.END)
         self.result_label.config(text="")
         self.draw_guitar()

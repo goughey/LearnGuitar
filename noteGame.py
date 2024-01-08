@@ -48,7 +48,7 @@ class GuitarNoteQuiz:
         self.fret_number = random.randint(0, 19)
         return self.string_number, self.fret_number
 
-    def get_note(self):
+    def get_note(self): # Gets the note the user us trying to guess
         string_notes = ['E', 'B', 'G', 'D', 'A', 'E']
         note_names = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
@@ -81,7 +81,7 @@ class GuitarNoteQuiz:
         selected_fret_position = 50 + self.fret_number * 35
         self.canvas.create_oval(selected_fret_position - 5, selected_string_position - 5, selected_fret_position + 5, selected_string_position + 5, fill='red')
 
-    def generate_note_labels(self):
+    def generate_note_labels(self):  # Peak functionality (display notes on guitar)
         if self.show_labels:
             string_notes = ['E', 'B', 'G', 'D', 'A', 'E']
             for string_num in range(6):
